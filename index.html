@@ -60,6 +60,26 @@
                     <span>⌘</span> Terminal
                 </button>
 
+                <button class="nav-item" data-view="calendar">
+                    <span>▦</span> Calendar
+                </button>
+
+                <button class="nav-item" data-view="files">
+                    <span>▣</span> File Manager
+                </button>
+
+                <button class="nav-item" data-view="music">
+                    <span>♫</span> Music Player
+                </button>
+
+                <button class="nav-item" data-view="tools">
+                    <span>◷</span> Utilities
+                </button>
+
+                <button class="nav-item" data-view="weather">
+                    <span>☀</span> Weather
+                </button>
+
             </nav>
 
             <div class="side-label">SYSTEM</div>
@@ -78,7 +98,7 @@
 
                 <div>
                     <b>All systems normal</b>
-                    <small>FANZ OS v1.0.0</small>
+                    <small>FANZ OS v2.0.0</small>
                 </div>
 
             </div>
@@ -102,6 +122,13 @@
                 </div>
 
                 <div class="top-actions">
+
+                    <input
+                        id="globalSearch"
+                        class="global-search"
+                        placeholder="Cari aplikasi lalu Enter..."
+                        aria-label="Cari aplikasi"
+                    >
 
                     <span class="live-pill">
                         <i></i> SYSTEM ONLINE
@@ -193,12 +220,15 @@
                 </div>
 
                 <div class="section-heading">
+
                     <div>
                         <h3>Workspace tools</h3>
+
                         <p class="muted">
                             Akses cepat aplikasi favoritmu.
                         </p>
                     </div>
+
                 </div>
 
                 <div class="tool-grid">
@@ -225,6 +255,36 @@
                         <span class="tool-icon orange">⌘</span>
                         <b>Terminal</b>
                         <small>Console interaktif</small>
+                    </button>
+
+                    <button class="tool-card" data-open="calendar">
+                        <span class="tool-icon cyan">▦</span>
+                        <b>Calendar</b>
+                        <small>Atur agenda dan jadwal</small>
+                    </button>
+
+                    <button class="tool-card" data-open="music">
+                        <span class="tool-icon pink">♫</span>
+                        <b>Music Player</b>
+                        <small>Putar audio dari perangkat</small>
+                    </button>
+
+                    <button class="tool-card" data-open="tools">
+                        <span class="tool-icon orange">◷</span>
+                        <b>Utilities</b>
+                        <small>Stopwatch dan timer</small>
+                    </button>
+
+                    <button class="tool-card" data-open="weather">
+                        <span class="tool-icon green">☀</span>
+                        <b>Weather</b>
+                        <small>Cek cuaca suatu kota</small>
+                    </button>
+
+                    <button class="tool-card" data-open="files">
+                        <span class="tool-icon purple">▣</span>
+                        <b>File Manager</b>
+                        <small>Lihat file pilihanmu</small>
                     </button>
 
                     <button class="tool-card" data-open="settings">
@@ -295,175 +355,176 @@
 
                 </div>
 
-            </section>
+                    </section>
 
-            <!-- NOTES -->
+                        <!-- NOTES -->
 
             <section class="view" id="view-notes">
 
-                <div class="page-title">
+                <div class="page-heading">
+                    <div>
+                        <p class="eyebrow">PRODUCTIVITY</p>
+                        <h1>Quick Notes</h1>
+                        <p class="muted">Simpan semua ide pentingmu.</p>
+                    </div>
 
-                    <p class="eyebrow">PERSONAL WORKSPACE</p>
-
-                    <h1>Quick <span>Notes.</span></h1>
-
-                    <p class="muted">
-                        Tulis ide sebelum menghilang dari pikiranmu.
-                    </p>
-
+                    <button class="primary-btn" id="addNoteBtn">
+                        + New Note
+                    </button>
                 </div>
 
-                <div class="panel editor-panel">
+                <div class="panel">
 
                     <input
+                        type="text"
                         id="noteTitle"
-                        class="field title-field"
                         placeholder="Judul catatan..."
                     >
 
                     <textarea
-                        id="noteBody"
-                        class="field note-area"
-                        placeholder="Mulai tulis sesuatu..."
+                        id="noteContent"
+                        placeholder="Tuliskan ide atau catatanmu..."
+                        rows="5"
                     ></textarea>
 
-                    <div class="editor-footer">
+                    <button class="primary-btn" id="saveNoteBtn">
+                        Simpan Catatan
+                    </button>
 
-                        <span>Tersimpan di perangkat ini</span>
-
-                        <button class="primary-btn" id="saveNote">
-                            Simpan catatan ↗
-                        </button>
-
-                    </div>
+                    <button class="secondary-btn" id="cancelNoteBtn">
+                        Batal
+                    </button>
 
                 </div>
 
-                <div class="section-heading">
-                    <h3>Saved notes</h3>
-                    <span id="noteCount">0 NOTES</span>
-                </div>
+                <input
+                    type="search"
+                    id="noteSearch"
+                    class="search-input"
+                    placeholder="Cari catatan..."
+                >
 
-                <div class="notes-list" id="notesList"></div>
+                <div class="notes-grid" id="notesList"></div>
 
             </section>
+
 
             <!-- TASK MANAGER -->
 
             <section class="view" id="view-tasks">
 
-                <div class="page-title">
-
-                    <p class="eyebrow">STAY ORGANIZED</p>
-
-                    <h1>Task <span>Manager.</span></h1>
-
-                    <p class="muted">
-                        Atur semua pekerjaanmu.
-                    </p>
-
+                <div class="page-heading">
+                    <div>
+                        <p class="eyebrow">TASK MANAGEMENT</p>
+                        <h1>My Tasks</h1>
+                        <p class="muted">Atur pekerjaan dan target harian.</p>
+                    </div>
                 </div>
 
-                <div class="panel task-input-row">
+                <div class="panel">
+
+                    <h3>Tambah tugas baru</h3>
 
                     <input
                         id="taskInput"
-                        class="field"
-                        placeholder="Tambahkan tugas baru..."
+                        type="text"
+                        placeholder="Nama tugas..."
                     >
 
-                    <button class="primary-btn" id="addTask">
-                        Tambah +
+                    <select id="taskPriority">
+                        <option value="low">Low Priority</option>
+                        <option value="medium">Medium Priority</option>
+                        <option value="high">High Priority</option>
+                    </select>
+
+                    <input
+                        id="taskDeadline"
+                        type="date"
+                    >
+
+                    <button class="primary-btn" id="addTaskBtn">
+                        + Tambahkan Tugas
                     </button>
 
                 </div>
 
-                <div class="task-stats">
+                <div class="stats-grid">
 
                     <div class="stat-card">
-                        <small>TOTAL TASKS</small>
-                        <b id="totalTasks">0</b>
+                        <small>Total Tasks</small>
+                        <h2 id="totalTasks">0</h2>
                     </div>
 
                     <div class="stat-card">
-                        <small>COMPLETED</small>
-                        <b id="doneTasks">0</b>
+                        <small>Completed</small>
+                        <h2 id="completedTasks">0</h2>
                     </div>
 
                     <div class="stat-card">
-                        <small>REMAINING</small>
-                        <b id="remainingTasks">0</b>
+                        <small>Pending</small>
+                        <h2 id="pendingTasks">0</h2>
                     </div>
 
                 </div>
 
                 <div class="panel">
 
-                    <div class="panel-head">
+                    <h3>Task List</h3>
 
-                        <h3>My tasks</h3>
-
-                        <button class="text-btn" id="clearDone">
-                            Hapus yang selesai
-                        </button>
-
-                    </div>
-
-                    <div id="taskList" class="task-list"></div>
+                    <div id="taskList"></div>
 
                 </div>
 
             </section>
+
 
             <!-- CALCULATOR -->
 
             <section class="view" id="view-calculator">
 
-                <div class="page-title">
-
-                    <p class="eyebrow">QUICK UTILITY</p>
-
-                    <h1>Smart <span>Calculator.</span></h1>
-
+                <div class="page-heading">
+                    <div>
+                        <p class="eyebrow">SMART TOOLS</p>
+                        <h1>Calculator</h1>
+                        <p class="muted">Kalkulator digital FANZ OS.</p>
+                    </div>
                 </div>
 
-                <div class="calculator panel">
+                <div class="calculator">
 
                     <div class="calc-display">
 
-                        <small id="calcHistory">
-                            FANZ OS CALCULATOR
-                        </small>
+                        <div id="calcHistory"></div>
 
-                        <div id="calcOutput">0</div>
+                        <div id="calcDisplay">0</div>
 
                     </div>
 
-                    <div class="calc-keys">
+                    <div class="calc-buttons">
 
-                        <button class="key utility" data-key="AC">AC</button>
-                        <button class="key utility" data-key="DEL">⌫</button>
-                        <button class="key utility" data-key="%">%</button>
-                        <button class="key operator" data-key="/">÷</button>
+                        <button data-calc="AC" class="danger">AC</button>
+                        <button data-calc="DEL">DEL</button>
+                        <button data-calc="%">%</button>
+                        <button data-calc="/" class="operator">÷</button>
 
-                        <button class="key" data-key="7">7</button>
-                        <button class="key" data-key="8">8</button>
-                        <button class="key" data-key="9">9</button>
-                        <button class="key operator" data-key="*">×</button>
+                        <button data-calc="7">7</button>
+                        <button data-calc="8">8</button>
+                        <button data-calc="9">9</button>
+                        <button data-calc="*" class="operator">×</button>
 
-                        <button class="key" data-key="4">4</button>
-                        <button class="key" data-key="5">5</button>
-                        <button class="key" data-key="6">6</button>
-                        <button class="key operator" data-key="-">−</button>
+                        <button data-calc="4">4</button>
+                        <button data-calc="5">5</button>
+                        <button data-calc="6">6</button>
+                        <button data-calc="-" class="operator">−</button>
 
-                        <button class="key" data-key="1">1</button>
-                        <button class="key" data-key="2">2</button>
-                        <button class="key" data-key="3">3</button>
-                        <button class="key operator" data-key="+">+</button>
+                        <button data-calc="1">1</button>
+                        <button data-calc="2">2</button>
+                        <button data-calc="3">3</button>
+                        <button data-calc="+" class="operator">+</button>
 
-                        <button class="key wide" data-key="0">0</button>
-                        <button class="key" data-key=".">.</button>
-                        <button class="key equals" data-key="=">=</button>
+                        <button data-calc="0" class="zero">0</button>
+                        <button data-calc=".">.</button>
+                        <button data-calc="=" class="equals">=</button>
 
                     </div>
 
@@ -471,53 +532,50 @@
 
             </section>
 
+
             <!-- TERMINAL -->
 
             <section class="view" id="view-terminal">
 
-                <div class="page-title">
-
-                    <p class="eyebrow">DEVELOPER TOOLS</p>
-
-                    <h1>System <span>Terminal.</span></h1>
-
-                    <p class="muted">
-                        Terminal simulasi lokal.
-                    </p>
-
+                <div class="page-heading">
+                    <div>
+                        <p class="eyebrow">DEVELOPER TOOLS</p>
+                        <h1>Terminal</h1>
+                        <p class="muted">FANZ OS command simulator.</p>
+                    </div>
                 </div>
 
-                <div class="terminal-window">
+                <div class="terminal">
 
-                    <div class="terminal-bar">
+                    <div class="terminal-header">
 
-                        <span>● ● ●</span>
-                        <span>fanzos — local terminal</span>
+                        <div class="terminal-dots">
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                        </div>
 
-                        <button id="clearTerminal">
-                            CLEAR
-                        </button>
-
-                    </div>
-
-                    <div class="terminal-body" id="terminalOutput">
-
-                        <p>FANZ OS Terminal [Version 1.0.0]</p>
-
-                        <p>
-                            Ketik <b>help</b> untuk melihat daftar perintah.
-                        </p>
+                        <span>fanz-terminal</span>
 
                     </div>
 
-                    <form id="terminalForm" class="terminal-input">
+                    <div
+                        class="terminal-output"
+                        id="terminalOutput"
+                    >
+                        <p>Welcome to FANZ OS Terminal.</p>
+                        <p>Type <b>help</b> to see available commands.</p>
+                    </div>
 
-                        <span>guest@fanzos:~$</span>
+                    <form id="terminalForm">
+
+                        <span>fanz@os:~$</span>
 
                         <input
-                            id="terminalCommand"
+                            id="terminalInput"
+                            type="text"
                             autocomplete="off"
-                            placeholder="ketik perintah..."
+                            placeholder="Enter command..."
                         >
 
                     </form>
@@ -526,60 +584,206 @@
 
             </section>
 
-            <!-- SETTINGS -->
 
-            <section class="view" id="view-settings">
+            <!-- CALENDAR -->
 
-                <div class="page-title">
+            <section class="view" id="view-calendar">
 
-                    <p class="eyebrow">CUSTOMIZE EXPERIENCE</p>
+                <div class="page-heading">
+                    <div>
+                        <p class="eyebrow">SCHEDULE</p>
+                        <h1>Calendar</h1>
+                        <p class="muted">Lihat kalender dan tanggal.</p>
+                    </div>
+                </div>
 
-                    <h1>System <span>Settings.</span></h1>
+                <div class="panel calendar-panel">
+
+                    <div class="calendar-header">
+
+                        <button id="prevMonth">←</button>
+
+                        <h2 id="calendarMonth"></h2>
+
+                        <button id="nextMonth">→</button>
+
+                    </div>
+
+                    <div class="calendar-grid" id="calendarGrid"></div>
 
                 </div>
 
-                <div class="panel settings-panel">
+            </section>
 
-                    <div class="setting-row">
 
-                        <div>
-                            <b>Appearance</b>
-                            <small>Ubah tampilan sistem.</small>
+            <!-- FILE MANAGER -->
+
+            <section class="view" id="view-files">
+
+                <div class="page-heading">
+                    <div>
+                        <p class="eyebrow">LOCAL STORAGE</p>
+                        <h1>File Manager</h1>
+                        <p class="muted">Pilih dan lihat file dari perangkatmu.</p>
+                    </div>
+                </div>
+
+                <div class="panel">
+
+                    <label for="fileInput" class="upload-area">
+
+                        <div>📁</div>
+
+                        <h3>Pilih File</h3>
+
+                        <p>Klik untuk membuka file dari perangkat.</p>
+
+                    </label>
+
+                    <input
+                        type="file"
+                        id="fileInput"
+                        multiple
+                        hidden
+                    >
+
+                </div>
+
+                <div class="panel">
+
+                    <h3>Selected Files</h3>
+
+                    <div id="fileList"></div>
+
+                </div>
+
+            </section>
+
+
+            <!-- MUSIC PLAYER -->
+
+            <section class="view" id="view-music">
+
+                <div class="page-heading">
+                    <div>
+                        <p class="eyebrow">ENTERTAINMENT</p>
+                        <h1>Music Player</h1>
+                        <p class="muted">Putar musik favoritmu.</p>
+                    </div>
+                </div>
+
+                <div class="music-card">
+
+                    <div class="music-cover">
+                        ♫
+                    </div>
+
+                    <h2 id="musicTitle">No Music Selected</h2>
+
+                    <p id="musicArtist">FANZ OS Music Player</p>
+
+                    <audio id="audioPlayer"></audio>
+
+                    <div class="music-progress">
+
+                        <span id="musicCurrent">00:00</span>
+
+                        <input
+                            type="range"
+                            id="musicSeek"
+                            min="0"
+                            max="100"
+                            value="0"
+                        >
+
+                        <span id="musicDuration">00:00</span>
+
+                    </div>
+
+                    <div class="music-controls">
+
+                        <button id="musicPrev">⏮</button>
+
+                        <button id="musicPlay" class="play-btn">
+                            ▶
+                        </button>
+
+                        <button id="musicNext">⏭</button>
+
+                    </div>
+
+                    <label for="musicInput" class="secondary-btn">
+                        + Choose Music
+                    </label>
+
+                    <input
+                        type="file"
+                        id="musicInput"
+                        accept="audio/*"
+                        multiple
+                        hidden
+                    >
+
+                    <div id="musicPlaylist"></div>
+
+                </div>
+
+            </section>
+
+
+            <!-- UTILITIES -->
+
+            <section class="view" id="view-tools">
+
+                <div class="page-heading">
+                    <div>
+                        <p class="eyebrow">SYSTEM UTILITIES</p>
+                        <h1>Utilities</h1>
+                        <p class="muted">Alat bantu waktu dan produktivitas.</p>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+
+                    <div class="panel utility-card">
+
+                        <h3>Stopwatch</h3>
+
+                        <div id="stopwatchDisplay">
+                            00:00:00
                         </div>
 
-                        <button class="secondary-btn" id="settingsTheme">
-                            Ganti tema
+                        <button id="stopwatchStart" class="primary-btn">
+                            Start
+                        </button>
+
+                        <button id="stopwatchReset" class="secondary-btn">
+                            Reset
                         </button>
 
                     </div>
 
-                    <div class="setting-row">
+                    <div class="panel utility-card">
 
-                        <div>
-                            <b>Accent color</b>
-                            <small>Pilih warna dashboard.</small>
+                        <h3>Countdown Timer</h3>
+
+                        <div id="timerDisplay">
+                            00:00
                         </div>
 
-                        <div class="swatches">
+                        <input
+                            id="timerMinutes"
+                            type="number"
+                            min="1"
+                            placeholder="Minutes"
+                        >
 
-                            <button data-color="#7c5cff" style="--swatch:#7c5cff"></button>
-                            <button data-color="#00c8e8" style="--swatch:#00c8e8"></button>
-                            <button data-color="#22c55e" style="--swatch:#22c55e"></button>
-                            <button data-color="#ff7a45" style="--swatch:#ff7a45"></button>
+                        <button id="timerStart" class="primary-btn">
+                            Start Timer
+                        </button>
 
-                        </div>
-
-                    </div>
-
-                    <div class="setting-row">
-
-                        <div>
-                            <b>Local data</b>
-                            <small>Reset catatan dan tugas.</small>
-                        </div>
-
-                        <button class="danger-btn" id="clearData">
-                            Reset data
+                        <button id="timerReset" class="secondary-btn">
+                            Reset
                         </button>
 
                     </div>
@@ -588,16 +792,159 @@
 
             </section>
 
-            <footer>
-                © 2026 FANZ OS
-                <span>BUILT FOR CREATIVITY</span>
+
+            <!-- WEATHER -->
+
+            <section class="view" id="view-weather">
+
+                <div class="page-heading">
+                    <div>
+                        <p class="eyebrow">WEATHER INFORMATION</p>
+                        <h1>Weather</h1>
+                        <p class="muted">Periksa kondisi cuaca suatu kota.</p>
+                    </div>
+                </div>
+
+                <div class="panel weather-panel">
+
+                    <div class="weather-search">
+
+                        <input
+                            id="weatherCity"
+                            placeholder="Masukkan nama kota..."
+                        >
+
+                        <button
+                            id="weatherSearchBtn"
+                            class="primary-btn"
+                        >
+                            Search
+                        </button>
+
+                    </div>
+
+                    <div id="weatherResult">
+
+                        <h2>☀</h2>
+
+                        <p>Masukkan nama kota untuk melihat cuaca.</p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- SETTINGS -->
+
+            <section class="view" id="view-settings">
+
+                <div class="page-heading">
+                    <div>
+                        <p class="eyebrow">PERSONALIZATION</p>
+                        <h1>Settings</h1>
+                        <p class="muted">Sesuaikan pengalaman FANZ OS.</p>
+                    </div>
+                </div>
+
+                <div class="panel">
+
+                    <h3>Appearance</h3>
+
+                    <div class="setting-row">
+
+                        <div>
+                            <b>Dark Mode</b>
+                            <small>Gunakan tampilan gelap.</small>
+                        </div>
+
+                        <button id="settingsThemeBtn">
+                            Toggle Theme
+                        </button>
+
+                    </div>
+
+                    <div class="setting-row">
+
+                        <div>
+                            <b>Accent Color</b>
+                            <small>Ubah warna utama sistem.</small>
+                        </div>
+
+                        <input
+                            type="color"
+                            id="accentColor"
+                            value="#8b5cf6"
+                        >
+
+                    </div>
+
+                </div>
+
+                <div class="panel">
+
+                    <h3>Data Management</h3>
+
+                    <p class="muted">
+                        Backup dan pulihkan data aplikasi.
+                    </p>
+
+                    <button class="primary-btn" id="exportBackup">
+                        Export Backup
+                    </button>
+
+                    <label class="secondary-btn">
+                        Import Backup
+                        <input
+                            type="file"
+                            id="importBackup"
+                            accept=".json,application/json"
+                            hidden
+                        >
+                    </label>
+
+                    <button class="danger-btn" id="clearData">
+                        Clear All Data
+                    </button>
+
+                </div>
+
+                <div class="panel">
+
+                    <h3>About FANZ OS</h3>
+
+                    <p>FANZ OS Web Operating System</p>
+
+                    <p class="muted">
+                        Version 2.0.0
+                    </p>
+
+                    <p class="muted">
+                        Developed by FANDI.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- FOOTER -->
+
+            <footer class="footer">
+
+                <span>© 2026 FANZ OS</span>
+
+                <span>Designed for productivity.</span>
+
             </footer>
 
         </main>
 
     </div>
 
-    <div class="toast" id="toast"></div>
+
+    <!-- JAVASCRIPT -->
 
     <script src="js/storage.js"></script>
     <script src="js/clock.js"></script>
@@ -606,4 +953,5 @@
     <script src="js/app.js"></script>
 
 </body>
-  </html>
+
+                </html>

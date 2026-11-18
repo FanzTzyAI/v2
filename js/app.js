@@ -1,465 +1,712 @@
-(() => {
+/* =========================================
+   FANZ OS V2.0 - MAIN APPLICATION
+========================================= */
 
-    const views = [
-        "home",
-        "notes",
-        "tasks",
-        "calculator",
-        "terminal",
-        "settings"
-    ];
+document.addEventListener("DOMContentLoaded", () => {
 
-    const names = {
-        home: "Overview",
-        notes: "Notes",
-        tasks: "Task Manager",
-        calculator: "Calculator",
-        terminal: "Terminal",
-        settings: "Settings"
-    };
+    const $ = (id) => document.getElementById(id);
 
-    const $ = id => document.getElementById(id);
+    /* =====================================
+       NAVIGATION
+    ===================================== */
 
-    // NOTIFICATION
+    const navItems = document.querySelectorAll("[data-view]");
+    const openButtons = document.querySelectorAll("[data-open]");
 
-    function toast(message) {
-
-        const el = $("toast");
-
-        el.textContent = message;
-
-        el.classList.add("show");
-
-        clearTimeout(toast.timer);
-
-        toast.timer = setTimeout(() => {
-
-            el.classList.remove("show");
-
-        }, 2300);
-
-    }
-
-    // NAVIGATION
-
-    function openView(name) {
-
-        if (!views.includes(name)) return;
-
+    function openView(viewName) {
         document.querySelectorAll(".view").forEach(view => {
-
-            view.classList.toggle(
-                "active",
-                view.id === "view-" + name
-            );
-
+            view.classList.remove("active");
         });
 
-        document.querySelectorAll(".nav-item").forEach(button => {
+        const target = $("view-" + viewName);
 
+        if (target) {
+            target.classList.add("active");
+        }
+
+        navItems.forEach(button => {
             button.classList.toggle(
                 "active",
-                button.dataset.view === name
+                button.dataset.view === viewName
             );
-
         });
 
-        $("pageName").textContent = names[name];
+        const pageName = $("pageName");
 
-        $("sidebar").classList.remove("open");
+        if (pageName) {
+            pageName.textContent =
+                viewName.charAt(0).toUpperCase() + viewName.slice(1);
+        }
 
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-
+        closeSidebar();
     }
 
-    document.querySelectorAll("[data-view]").forEach(button => {
-
+    navItems.forEach(button => {
         button.addEventListener("click", () => {
-
             openView(button.dataset.view);
-
         });
-
     });
 
-    document.querySelectorAll("[data-open]").forEach(button => {
-
+    openButtons.forEach(button => {
         button.addEventListener("click", () => {
-
             openView(button.dataset.open);
-
         });
-
     });
 
-    // MOBILE MENU
+    /* =====================================
+       MOBILE SIDEBAR
+    ===================================== */
 
-    $("menuBtn").addEventListener("click", () => {
+    const sidebar = document.querySelector(".sidebar");
+    const menuBtn = $("menuBtn");
 
-        $("sidebar").classList.toggle("open");
-
-    });
-
-    // THEME
-
-    function applyTheme() {
-
-        document.body.classList.toggle(
-            "light",
-            Store.get("theme", "dark") === "light"
-        );
-
+    function closeSidebar() {
+        if (sidebar) {
+            sidebar.classList.remove("show");
+        }
     }
 
-    function toggleTheme() {
-
-        const current = Store.get("theme", "dark");
-
-        Store.set(
-            "theme",
-            current === "dark" ? "light" : "dark"
-        );
-
-        applyTheme();
-
-        toast("Tema berhasil diubah.");
-
+    if (menuBtn && sidebar) {
+        menuBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("show");
+        });
     }
 
-    $("themeBtn").addEventListener(
-        "click",
-        toggleTheme
-    );
+    /* =====================================
+       GLOBAL SEARCH
+    ===================================== */
 
-    $("settingsTheme").addEventListener(
-        "click",
-        toggleTheme
-    );
+    const globalSearch = $("globalSearch");
 
-    applyTheme();
+    if (globalSearch) {
+        globalSearch.addEventListener("keydown", event => {
+            if (event.key !== "Enter") return;
 
-    // ACCENT COLOR
+            const keyword = globalSearch.value
+                .trim()
+                .toLowerCase();
 
-    const savedColor = Store.get(
-        "accent",
-        "#7c5cff"
-    );
+            const aliases = {
+                home: "home",
+                dashboard: "home",
+                beranda: "home",
+                notes: "notes",
+                catatan: "notes",
+                tasks: "tasks",
+                tugas: "tasks",
+                calculator: "calculator",
+                kalkulator: "calculator",
+                terminal: "terminal",
+                calendar: "calendar",
+                kalender: "calendar",
+                files: "files",
+                file: "files",
+                musik: "music",
+                music: "music",
+                tools: "tools",
+                utilities: "tools",
+                cuaca: "weather",
+                weather: "weather",
+                settings: "settings",
+                pengaturan: "settings"
+            };
 
-    document.documentElement.style.setProperty(
-        "--accent",
-        savedColor
-    );
+            const destination = aliases[keyword];
 
-    document.querySelectorAll("[data-color]").forEach(button => {
-
-        button.addEventListener("click", () => {
-
-            const color = button.dataset.color;
-
-            document.documentElement.style.setProperty(
-                "--accent",
-                color
-            );
-
-            Store.set("accent", color);
-
-            toast("Warna aksen diperbarui.");
-
+            if (destination) {
+                openView(destination);
+                globalSearch.value = "";
+            } else {
+                alert("Aplikasi tidak ditemukan: " + keyword);
+            }
         });
+    }
 
-    });
+    /* =====================================
+       DASHBOARD DATE
+    ===================================== */
 
-    // NOTES
+    const greeting = $("greeting");
 
-    let notes = Store.get("notes", []);
+    if (greeting) {
+        const hour = new Date().getHours();
+
+        if (hour < 11) {
+            greeting.textContent = "Selamat pagi!";
+        } else if (hour < 15) {
+            greeting.textContent = "Selamat siang!";
+        } else if (hour < 18) {
+            greeting.textContent = "Selamat sore!";
+        } else {
+            greeting.textContent = "Selamat malam!";
+        }
+    }
+
+    /* =====================================
+       NOTES APPLICATION
+    ===================================== */
+
+    let notes = Storage.get("notes", []);
+    let editingNoteId = null;
+
+    const noteTitle = $("noteTitle");
+    const noteContent = $("noteContent");
+    const addNoteBtn = $("addNoteBtn");
+    const saveNoteBtn = $("saveNoteBtn");
+    const cancelNoteBtn = $("cancelNoteBtn");
+    const noteSearch = $("noteSearch");
+    const notesList = $("notesList");
+
+    function resetNoteForm() {
+        editingNoteId = null;
+
+        if (noteTitle) noteTitle.value = "";
+        if (noteContent) noteContent.value = "";
+
+        if (saveNoteBtn) {
+            saveNoteBtn.textContent = "Simpan Catatan";
+        }
+    }
 
     function renderNotes() {
+        if (!notesList) return;
 
-        const container = $("notesList");
+        notesList.innerHTML = "";
 
-        container.innerHTML = "";
+        const search = noteSearch
+            ? noteSearch.value.toLowerCase()
+            : "";
 
-        $("noteCount").textContent =
-            notes.length + " NOTES";
+        const filtered = notes.filter(note => {
+            return (
+                note.title.toLowerCase().includes(search) ||
+                note.content.toLowerCase().includes(search)
+            );
+        });
 
-        if (!notes.length) {
-
-            container.innerHTML =
-                '<div class="empty">Belum ada catatan tersimpan.</div>';
-
+        if (filtered.length === 0) {
+            notesList.textContent = "Belum ada catatan.";
             return;
-
         }
 
-        notes.forEach((note, index) => {
-
-            const card = document.createElement("article");
-
+        filtered.forEach(note => {
+            const card = document.createElement("div");
             card.className = "note-card";
 
-            const title = document.createElement("h4");
-
+            const title = document.createElement("h3");
             title.textContent = note.title;
 
-            const body = document.createElement("p");
-
-            body.textContent = note.body;
+            const content = document.createElement("p");
+            content.textContent = note.content;
 
             const date = document.createElement("small");
+            date.textContent = new Date(note.updatedAt)
+                .toLocaleString("id-ID");
 
-            date.textContent = note.date;
+            const actions = document.createElement("div");
+            actions.className = "note-actions";
 
-            date.style.cssText =
-                "display:block;color:var(--muted);font-size:8px;margin:9px 0";
+            const editBtn = document.createElement("button");
+            editBtn.textContent = "Edit";
+            editBtn.className = "secondary-btn";
 
-            const deleteButton = document.createElement("button");
+            editBtn.addEventListener("click", () => {
+                editingNoteId = note.id;
 
-            deleteButton.textContent = "Hapus catatan";
+                noteTitle.value = note.title;
+                noteContent.value = note.content;
 
-            deleteButton.addEventListener("click", () => {
+                saveNoteBtn.textContent = "Update Catatan";
 
-                notes.splice(index, 1);
-
-                Store.set("notes", notes);
-
-                renderNotes();
-
-                toast("Catatan dihapus.");
-
+                noteTitle.focus();
             });
 
-            card.append(
-                title,
-                body,
-                date,
-                deleteButton
-            );
+            const deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "Hapus";
+            deleteBtn.className = "danger-btn";
 
-            container.appendChild(card);
+            deleteBtn.addEventListener("click", () => {
+                if (!confirm("Hapus catatan ini?")) return;
 
+                notes = notes.filter(item => item.id !== note.id);
+
+                Storage.set("notes", notes);
+
+                renderNotes();
+                resetNoteForm();
+            });
+
+            actions.append(editBtn, deleteBtn);
+            card.append(title, content, date, actions);
+
+            notesList.appendChild(card);
         });
-
     }
 
-    $("saveNote").addEventListener("click", () => {
-
-        const title = $("noteTitle").value.trim();
-
-        const body = $("noteBody").value.trim();
-
-        if (!title && !body) {
-
-            toast("Tulis catatan terlebih dahulu.");
-
-            return;
-
-        }
-
-        notes.unshift({
-
-            title: title || "Tanpa judul",
-
-            body: body,
-
-            date: new Date().toLocaleString("id-ID")
-
+    if (addNoteBtn) {
+        addNoteBtn.addEventListener("click", () => {
+            resetNoteForm();
+            noteTitle.focus();
         });
+    }
 
-        Store.set("notes", notes);
+    if (saveNoteBtn) {
+        saveNoteBtn.addEventListener("click", () => {
+            const title = noteTitle.value.trim();
+            const content = noteContent.value.trim();
 
-        $("noteTitle").value = "";
+            if (!title || !content) {
+                alert("Isi judul dan konten catatan terlebih dahulu.");
+                return;
+            }
 
-        $("noteBody").value = "";
+            if (editingNoteId !== null) {
+                notes = notes.map(note => {
+                    if (note.id === editingNoteId) {
+                        return {
+                            ...note,
+                            title,
+                            content,
+                            updatedAt: Date.now()
+                        };
+                    }
 
-        renderNotes();
+                    return note;
+                });
+            } else {
+                notes.unshift({
+                    id: Date.now() + Math.random(),
+                    title,
+                    content,
+                    createdAt: Date.now(),
+                    updatedAt: Date.now()
+                });
+            }
 
-        toast("Catatan berhasil disimpan.");
+            Storage.set("notes", notes);
 
-    });
+            resetNoteForm();
+            renderNotes();
+        });
+    }
+
+    if (cancelNoteBtn) {
+        cancelNoteBtn.addEventListener("click", resetNoteForm);
+    }
+
+    if (noteSearch) {
+        noteSearch.addEventListener("input", renderNotes);
+    }
 
     renderNotes();
 
-    // TASK MANAGER
+    /* =====================================
+       TASK MANAGER
+    ===================================== */
 
-    let tasks = Store.get("tasks", []);
+    let tasks = Storage.get("tasks", []);
+
+    const taskInput = $("taskInput");
+    const taskPriority = $("taskPriority");
+    const taskDeadline = $("taskDeadline");
+    const addTaskBtn = $("addTaskBtn");
+    const taskList = $("taskList");
 
     function renderTasks() {
+        if (!taskList) return;
 
-        const container = $("taskList");
+        taskList.innerHTML = "";
 
-        container.innerHTML = "";
-
-        if (!tasks.length) {
-
-            container.innerHTML =
-                '<div class="empty">Belum ada tugas. Tambahkan tugas pertamamu!</div>';
-
+        if (tasks.length === 0) {
+            taskList.textContent = "Belum ada tugas.";
         }
 
-        tasks.forEach((task, index) => {
-
-            const row = document.createElement("div");
-
-            row.className =
-                "task-item" + (task.done ? " done" : "");
+        tasks.forEach(task => {
+            const item = document.createElement("div");
+            item.className = "task-item";
 
             const checkbox = document.createElement("input");
-
             checkbox.type = "checkbox";
-
-            checkbox.checked = task.done;
+            checkbox.checked = task.completed;
 
             checkbox.addEventListener("change", () => {
+                task.completed = checkbox.checked;
 
-                tasks[index].done = checkbox.checked;
-
-                saveTasks();
-
+                Storage.set("tasks", tasks);
+                renderTasks();
             });
 
-            const label = document.createElement("span");
+            const info = document.createElement("div");
+            info.className = "task-info";
 
-            label.textContent = task.text;
+            const title = document.createElement("span");
+            title.textContent = task.title;
 
-            const deleteButton = document.createElement("button");
+            if (task.completed) {
+                title.style.textDecoration = "line-through";
+                title.style.opacity = "0.6";
+            }
 
-            deleteButton.textContent = "✕";
+            const details = document.createElement("small");
 
-            deleteButton.addEventListener("click", () => {
+            const deadlineText = task.deadline
+                ? " • " + task.deadline
+                : "";
 
-                tasks.splice(index, 1);
+            details.textContent =
+                "Prioritas: " + task.priority + deadlineText;
 
-                saveTasks();
+            info.append(title, details);
 
+            const deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "Hapus";
+            deleteBtn.className = "danger-btn";
+
+            deleteBtn.addEventListener("click", () => {
+                tasks = tasks.filter(item => item.id !== task.id);
+
+                Storage.set("tasks", tasks);
+                renderTasks();
             });
 
-            row.append(
-                checkbox,
-                label,
-                deleteButton
-            );
-
-            container.appendChild(row);
-
+            item.append(checkbox, info, deleteBtn);
+            taskList.appendChild(item);
         });
-
-        const done = tasks.filter(task => task.done).length;
 
         const total = tasks.length;
+        const completed = tasks.filter(task => task.completed).length;
+        const pending = total - completed;
 
-        const remaining = total - done;
+        if ($("totalTasks")) $("totalTasks").textContent = total;
+        if ($("completedTasks")) $("completedTasks").textContent = completed;
+        if ($("pendingTasks")) $("pendingTasks").textContent = pending;
 
-        const percentage = total
-            ? Math.round(done / total * 100)
+        const progress = total
+            ? Math.round((completed / total) * 100)
             : 0;
 
-        $("totalTasks").textContent = total;
+        const progressBar = $("taskProgress");
 
-        $("doneTasks").textContent = done;
-
-        $("remainingTasks").textContent = remaining;
-
-        $("taskProgress").textContent =
-            percentage + "%";
-
-        $("progressBar").style.width =
-            percentage + "%";
-
-        $("taskSummary").textContent =
-            done + " dari " + total + " tugas selesai";
-
-    }
-
-    function saveTasks() {
-
-        Store.set("tasks", tasks);
-
-        renderTasks();
-
-    }
-
-    function addTask() {
-
-        const value = $("taskInput").value.trim();
-
-        if (!value) {
-
-            toast("Tulis tugas terlebih dahulu.");
-
-            return;
-
+        if (progressBar) {
+            progressBar.style.width = progress + "%";
         }
+    }
 
-        tasks.push({
+    if (addTaskBtn) {
+        addTaskBtn.addEventListener("click", () => {
+            const title = taskInput.value.trim();
 
-            text: value,
+            if (!title) {
+                alert("Masukkan nama tugas terlebih dahulu.");
+                return;
+            }
 
-            done: false
+            tasks.unshift({
+                id: Date.now() + Math.random(),
+                title,
+                priority: taskPriority.value,
+                deadline: taskDeadline.value,
+                completed: false,
+                createdAt: Date.now()
+            });
 
+            Storage.set("tasks", tasks);
+
+            taskInput.value = "";
+            taskDeadline.value = "";
+
+            renderTasks();
         });
-
-        $("taskInput").value = "";
-
-        saveTasks();
-
-        toast("Tugas ditambahkan.");
-
     }
-
-    $("addTask").addEventListener(
-        "click",
-        addTask
-    );
-
-    $("taskInput").addEventListener("keydown", event => {
-
-        if (event.key === "Enter") {
-
-            addTask();
-
-        }
-
-    });
-
-    $("clearDone").addEventListener("click", () => {
-
-        tasks = tasks.filter(task => !task.done);
-
-        saveTasks();
-
-        toast("Tugas selesai dihapus.");
-
-    });
 
     renderTasks();
 
-    // RESET DATA
+    /* =====================================
+       CALENDAR
+    ===================================== */
 
-    $("clearData").addEventListener("click", () => {
+    let calendarDate = new Date();
 
-        const confirmReset = confirm(
-            "Hapus semua catatan dan tugas?"
+    const calendarMonth = $("calendarMonth");
+    const calendarGrid = $("calendarGrid");
+
+    function renderCalendar() {
+        if (!calendarGrid) return;
+
+        const year = calendarDate.getFullYear();
+        const month = calendarDate.getMonth();
+
+        if (calendarMonth) {
+            calendarMonth.textContent =
+                calendarDate.toLocaleDateString("id-ID", {
+                    month: "long",
+                    year: "numeric"
+                });
+        }
+
+        calendarGrid.innerHTML = "";
+
+        const weekdays = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
+
+        weekdays.forEach(day => {
+            const cell = document.createElement("div");
+            cell.className = "calendar-weekday";
+            cell.textContent = day;
+
+            calendarGrid.appendChild(cell);
+        });
+
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        const today = new Date();
+
+        for (let i = 0; i < firstDay; i++) {
+            const empty = document.createElement("div");
+            empty.className = "calendar-empty";
+
+            calendarGrid.appendChild(empty);
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const cell = document.createElement("button");
+            cell.className = "calendar-day";
+            cell.textContent = day;
+
+            if (
+                day === today.getDate() &&
+                month === today.getMonth() &&
+                year === today.getFullYear()
+            ) {
+                cell.classList.add("today");
+            }
+
+            cell.addEventListener("click", () => {
+                alert(
+                    "Tanggal dipilih: " +
+                    new Date(year, month, day)
+                        .toLocaleDateString("id-ID", {
+                            dateStyle: "full"
+                        })
+                );
+            });
+
+            calendarGrid.appendChild(cell);
+        }
+    }
+
+    if ($("prevMonth")) {
+        $("prevMonth").addEventListener("click", () => {
+            calendarDate.setMonth(calendarDate.getMonth() - 1);
+            renderCalendar();
+        });
+    }
+
+    if ($("nextMonth")) {
+        $("nextMonth").addEventListener("click", () => {
+            calendarDate.setMonth(calendarDate.getMonth() + 1);
+            renderCalendar();
+        });
+    }
+
+    renderCalendar();
+
+    /* =====================================
+       FILE MANAGER
+    ===================================== */
+
+    const fileInput = $("fileInput");
+    const fileList = $("fileList");
+
+    function renderFiles(files) {
+        if (!fileList) return;
+
+        fileList.innerHTML = "";
+
+        if (!files.length) {
+            fileList.textContent = "Belum ada file dipilih.";
+            return;
+        }
+
+        Array.from(files).forEach(file => {
+            const item = document.createElement("div");
+            item.className = "file-item";
+
+            const name = document.createElement("strong");
+            name.textContent = file.name;
+
+            const details = document.createElement("small");
+            details.textContent =
+                file.type || "File tidak diketahui" +
+                " • " + (file.size / 1024).toFixed(2) + " KB";
+
+            item.append(name, details);
+            fileList.appendChild(item);
+        });
+    }
+
+    if (fileInput) {
+        fileInput.addEventListener("change", () => {
+            renderFiles(fileInput.files);
+        });
+    }
+
+    /* =====================================
+       MUSIC PLAYER
+    ===================================== */
+
+    const audioPlayer = $("audioPlayer");
+    const musicInput = $("musicInput");
+    const musicTitle = $("musicTitle");
+    const musicArtist = $("musicArtist");
+    const musicPlay = $("musicPlay");
+    const musicPrev = $("musicPrev");
+    const musicNext = $("musicNext");
+    const musicSeek = $("musicSeek");
+    const musicCurrent = $("musicCurrent");
+    const musicDuration = $("musicDuration");
+    const musicPlaylist = $("musicPlaylist");
+
+    let playlist = [];
+    let currentTrack = 0;
+
+    function formatTime(seconds) {
+        if (!Number.isFinite(seconds)) return "00:00";
+
+        const minutes = Math.floor(seconds / 60);
+        const remaining = Math.floor(seconds % 60);
+
+        return (
+            String(minutes).padStart(2, "0") +
+            ":" +
+            String(remaining).padStart(2, "0")
         );
+    }
 
-        if (!confirmReset) return;
+    function loadTrack(index) {
+        if (!playlist.length || !audioPlayer) return;
 
-        notes = [];
+        currentTrack =
+            (index + playlist.length) % playlist.length;
 
-        tasks = [];
+        const track = playlist[currentTrack];
 
-        Store.set("notes", notes);
+        audioPlayer.src = track.url;
 
-        Store.set("tasks", tasks);
+        if (musicTitle) {
+            musicTitle.textContent = track.name;
+        }
 
-        renderNotes();
+        if (musicArtist) {
+            musicArtist.textContent = "Local Audio";
+        }
 
-        renderTasks();
+        if (musicPlay) {
+            musicPlay.textContent = "▶";
+        }
 
-        toast("Data lokal berhasil direset.");
+        renderPlaylist();
+    }
 
-    });
+    function renderPlaylist() {
+        if (!musicPlaylist) return;
 
-})();
+        musicPlaylist.innerHTML = "";
+
+        playlist.forEach((track, index) => {
+            const button = document.createElement("button");
+
+            button.className = "playlist-item";
+            button.textContent =
+                (index === currentTrack ? "▶ " : "") + track.name;
+
+            button.addEventListener("click", () => {
+                loadTrack(index);
+                audioPlayer.play();
+            });
+
+            musicPlaylist.appendChild(button);
+        });
+    }
+
+    if (musicInput) {
+        musicInput.addEventListener("change", () => {
+            playlist.forEach(track => URL.revokeObjectURL(track.url));
+
+            playlist = Array.from(musicInput.files)
+                .filter(file => file.type.startsWith("audio/"))
+                .map(file => ({
+                    name: file.name,
+                    url: URL.createObjectURL(file)
+                }));
+
+            if (!playlist.length) {
+                alert("Tidak ada file audio yang valid.");
+                return;
+            }
+
+            loadTrack(0);
+        });
+    }
+
+    if (musicPlay && audioPlayer) {
+        musicPlay.addEventListener("click", () => {
+            if (!playlist.length) {
+                alert("Pilih file musik terlebih dahulu.");
+                return;
+            }
+
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+            } else {
+                audioPlayer.pause();
+            }
+        });
+    }
+
+    if (musicPrev) {
+        musicPrev.addEventListener("click", () => {
+            loadTrack(currentTrack - 1);
+            audioPlayer.play();
+        });
+    }
+
+    if (musicNext) {
+        musicNext.addEventListener("click", () => {
+            loadTrack(currentTrack + 1);
+            audioPlayer.play();
+        });
+    }
+
+    if (audioPlayer) {
+        audioPlayer.addEventListener("play", () => {
+            if (musicPlay) musicPlay.textContent = "⏸";
+        });
+
+        audioPlayer.addEventListener("pause", () => {
+            if (musicPlay) musicPlay.textContent = "▶";
+        });
+
+        audioPlayer.addEventListener("ended", () => {
+            if (playlist.length) {
+                loadTrack(currentTrack + 1);
+                audioPlayer.play();
+            }
+        });
+
+        audioPlayer.addEventListener("timeupdate", () => {
+            if (musicSeek && audioPlayer.duration) {
+                musicSeek.value =
+                    (audioPlayer.currentTime / audioPlayer.duration) * 100;
+            }
+
+            if (musicCurrent) {
+                musicCurrent.textContent =
+                    formatTime(audioPlayer.currentTime);
+            }
+        });
+
+        audioPlayer.addEventListener("loadedmetadata", () => {
+            if (musicDuration) {
+                musicDuration.textContent =
+                    
